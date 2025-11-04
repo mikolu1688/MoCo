@@ -1,9 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好友資料練習</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .friend {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px auto;
+            max-width: 400px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        .contact {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
 
 <body>
-    <script>
+    <h1>我的好友清單</h1>
+    <div id="friends-container"></div>
 
+    <script>
+        // 定義三位朋友
         let friend1 = {
             name: '王小慧',
             age: 26,
@@ -29,28 +70,41 @@
             age: 27,
             hobbies: ['唱歌', '跳舞', '旅遊'],
             contact: {
-                phone: '095782663',
-                email: 'sdllfl;v;v@example.com'
+                phone: '0957826663',
+                email: 'longquan@example.com'
             }
         };
 
-
+        // 建立朋友陣列
         let friends = [];
-
-
         friends.push(friend1, friend2, friend3);
 
-
-        console.log(friends[1].name);
-        console.log(friends[0].hobbies[2]);
-        console.log(friends[2].contact.email);
-
-
+        // 增加一個新興趣
         friends[1].hobbies.push('拉小提琴');
 
+        // 找到容器
+        let container = document.getElementById('friends-container');
 
-        console.log(friends[1].hobbies);
+        // 顯示所有朋友資料
+        friends.forEach(friend => {
+            let friendDiv = document.createElement('div');
+            friendDiv.className = 'friend';
 
+            friendDiv.innerHTML = `
+                <h2>${friend.name}</h2>
+                <p>年齡：${friend.age}</p>
+                <p>興趣：</p>
+                <ul>
+                    ${friend.hobbies.map(hobby => `<li>${hobby}</li>`).join('')}
+                </ul>
+                <div class="contact">
+                    <p>📞 電話：${friend.contact.phone}</p>
+                    <p>📧 Email：${friend.contact.email}</p>
+                </div>
+            `;
+
+            container.appendChild(friendDiv);
+        });
     </script>
 </body>
 
