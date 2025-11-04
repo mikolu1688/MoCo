@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: "Microsoft JhengHei", sans-serif;
-            background-color: #f7f7f7;
+            background-color: #A0E7E5; /* Tiffany 綠 */
             margin: 0;
             padding: 20px;
         }
@@ -26,6 +26,12 @@
             margin: 10px auto;
             max-width: 400px;
             box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .friend:hover {
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         ul {
@@ -44,7 +50,6 @@
     <div id="friends-container"></div>
 
     <script>
-        // 定義三位朋友
         let friend1 = {
             name: '王小慧',
             age: 26,
@@ -75,17 +80,13 @@
             }
         };
 
-        // 建立朋友陣列
-        let friends = [];
-        friends.push(friend1, friend2, friend3);
+        let friends = [friend1, friend2, friend3];
 
         // 增加一個新興趣
         friends[1].hobbies.push('拉小提琴');
 
-        // 找到容器
         let container = document.getElementById('friends-container');
 
-        // 顯示所有朋友資料
         friends.forEach(friend => {
             let friendDiv = document.createElement('div');
             friendDiv.className = 'friend';
