@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好友資料練習</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            background-color: #A0E7E5; /* Tiffany 綠 */
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .friend {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px auto;
+            max-width: 400px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .friend:hover {
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        .contact {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>我的好友清單</h1>
+    <div id="friends-container"></div>
+
+    <script>
+        let friend1 = {
+            name: '王小慧',
+            age: 26,
+            hobbies: ['爬山', '看電影', '吃美食'],
+            contact: {
+                phone: '0912345678',
+                email: 'datong@example.com'
+            }
+        };
+
+        let friend2 = {
+            name: '呂曉娟',
+            age: 25,
+            hobbies: ['拍片', '旅行', '看影片'],
+            contact: {
+                phone: '0922337774',
+                email: 'sallyi@example.com'
+            }
+        };
+
+        let friend3 = {
+            name: '權小龍',
+            age: 27,
+            hobbies: ['唱歌', '跳舞', '旅遊'],
+            contact: {
+                phone: '0957826663',
+                email: 'longquan@example.com'
+            }
+        };
+
+        let friends = [friend1, friend2, friend3];
+
+        // 增加一個新興趣
+        friends[1].hobbies.push('拉小提琴');
+
+        let container = document.getElementById('friends-container');
+
+        friends.forEach(friend => {
+            let friendDiv = document.createElement('div');
+            friendDiv.className = 'friend';
+
+            friendDiv.innerHTML = `
+                <h2>${friend.name}</h2>
+                <p>年齡：${friend.age}</p>
+                <p>興趣：</p>
+                <ul>
+                    ${friend.hobbies.map(hobby => `<li>${hobby}</li>`).join('')}
+                </ul>
+                <div class="contact">
+                    <p>📞 電話：${friend.contact.phone}</p>
+                    <p>📧 Email：${friend.contact.email}</p>
+                </div>
+            `;
+
+            container.appendChild(friendDiv);
+        });
+    </script>
+</body>
+
+</html>
