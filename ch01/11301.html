@@ -1,63 +1,78 @@
-// ===== 🌍 地理位置檢查 =====
-function checkGeolocationSupport() {
-  if ("geolocation" in navigator) {
-    console.log("地理位置服務可用");
-    return true;
-  } else {
-    console.log("地理位置服務不可用");
-    return false;
-  }
-}
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>定位 + 感測器 Demo</title>
+</head>
+<body>
+  <h2>定位 & 感測器 Demo</h2>
+  <button id="getLocationBtn">取得我的位置</button>
 
-// ===== 📍 取得位置 =====
-function getCurrentLocation() {
-  if (!checkGeolocationSupport()) return;
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      console.log("位置取得成功:", position);
-      handlePosition(position);
-    },
-    (error) => {
-      console.error("位置取得失敗:", error);
-    }
-  );
-}
-
-// ===== 🧭 處理位置資料 =====
-function handlePosition(position) {
-  const coords = position.coords;
-  
-  console.log("緯度:", coords.latitude);
-  console.log("經度:", coords.longitude);
-  console.log("精度:", coords.accuracy);
-  console.log("海拔:", coords.altitude);
-  console.log("海拔精度:", coords.altitudeAccuracy);
-  console.log("方向:", coords.heading);
-  console.log("速度:", coords.speed);
-}
-
-// ===== 📱 感測器權限請求（部分瀏覽器需要）=====
-async function requestSensorPermissions() {
-  try {
-    if (!navigator.permissions) {
-      console.log("此瀏覽器不支援 Permissions API");
-      return;
+  <script>
+    // ===== 🌍 檢查地理位置 =====
+    function checkGeolocationSupport() {
+      if ("geolocation" in navigator) {
+        console.log("地理位置服務可用");
+        return true;
+      } else {
+        console.log("地理位置服務不可用");
+        return false;
+      }
     }
 
-    await navigator.permissions.query({ name: 'accelerometer' });
-    await navigator.permissions.query({ name: 'gyroscope' });
+    // ===== 📍 取得位置 =====
+    function getCurrentLocation() {
+      if (!checkGeolocationSupport()) return;
 
-    console.log("感測器權限查詢完成（不一定代表已授權）");
-  } catch (err) {
-    console.log("感測器權限請求出錯：", err);
-  }
-}
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log("位置取得成功:", position);
+          handlePosition(position);
+        },
+        (error) => {
+          console.error("位置取得失敗:", error);
+        }
+      );
+    }
 
-// ===== 🚀 初始化使用 =====
-async function init() {
-  await requestSensorPermissions();
-  getCurrentLocation();
-}
+    // ===== 🧭 印出位置資訊 =====
+    function handlePosition(position) {
+      const c = position.coords;
 
-init();
+      console.log("---- 位置資訊 ----");
+      console.log("緯度:", c.latitude);
+      console.log("經度:", c.longitude);
+      console.log("精度 (公尺):", c.accuracy);
+      console.log("海拔:", c.altitude);
+      console.log("海拔精度:", c.altitudeAccuracy);
+      console.log("方向 (0=北):", c.heading);
+      console.log("速度 (公尺/秒):", c.speed);
+      console.log("------------------");
+    }
+
+    // ===== 📱 感測器權限（部分瀏覽器需要）=====
+    async function requestSensorPermissions() {
+      try {
+        if (!navigator.permissions) {
+          console.log("此瀏覽器不支援 Permissions API");
+          return;
+        }
+
+        await navigator.permissions.query({ name: "accelerometer" });
+        await navigator.permissions.query({ name: "gyroscope" });
+
+        console.log("感測器權限查詢完成（不一定代表已授權）");
+      } catch (err) {
+        console.log("感測器權限請求出錯：", err);
+      }
+    }
+
+    // ===== 🚀 綁定按鈕 =====
+    document.getElementById("getLocationBtn").addEventListener("click", () => {
+      requestSensorPermissions();
+      getCurrentLocation();
+    });
+  </script>
+</body>
+</html>
