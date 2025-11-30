@@ -6,83 +6,122 @@
 <title>定位示範頁</title>
 
 <style>
-    body {
-        font-family: "Microsoft JhengHei", sans-serif;
-        background: #e8f8f6; /* Tiffany綠淡色 */
-        margin: 0;
-        padding: 40px 20px;
-        color: #333;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+/* --- RESET，避免外部樣式影響 --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    h1 {
-        color: #009f9d; /* 深一點的 Tiffany 綠 */
-        margin-bottom: 20px;
-    }
+/* --- 背景與排版 --- */
+body {
+    font-family: "Microsoft JhengHei", sans-serif;
+    background: linear-gradient(135deg, #a6f4ef, #dffffa, #c0f7f3);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+}
 
-    button {
-        background-color: #00b3b0; 
-        color: white;
-        border: none;
-        padding: 14px 28px;
-        font-size: 1.2rem;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: 0.25s;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    }
+/* --- 容器卡片 --- */
+.container {
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border-radius: 20px;
+    padding: 32px 28px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+    text-align: center;
+    animation: fadein 0.5s ease;
+}
 
-    button:hover {
-        background-color: #009f9d;
-        transform: translateY(-2px);
-    }
+/* --- 標題 --- */
+h1 {
+    color: #00a8a3;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
 
-    #output {
-        margin-top: 30px;
-        width: 90%;
-        max-width: 420px;
-        padding: 20px;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-        line-height: 1.8;
-        white-space: pre-line;
-    }
+/* --- 按鈕樣式 --- */
+button {
+    background-color: #00b3b0;
+    color: #fff;
+    border: none;
+    padding: 15px 32px;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.25s;
+    width: 100%;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.18);
+}
 
-    .loading {
-        animation: blink 1s infinite;
-    }
+button:hover {
+    background-color: #009f9d;
+    transform: translateY(-3px);
+}
 
-    @keyframes blink {
-        0% { opacity: 1; }
-        50% { opacity: 0.45; }
-        100% { opacity: 1; }
-    }
+button:active {
+    transform: translateY(1px);
+}
+
+/* --- 顯示框 --- */
+#output {
+    margin-top: 24px;
+    padding: 18px;
+    background: #f3fdfd;
+    border-left: 5px solid #00b3b0;
+    border-radius: 10px;
+    text-align: left;
+    white-space: pre-line;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #333;
+    min-height: 60px;
+}
+
+/* --- Loading 動畫 --- */
+.loading {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* --- 卡片淡入動畫 --- */
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 
 <body>
+<div class="container">
+    <h1>📍 位置取得示範</h1>
 
-<h1>📍 位置取得示範</h1>
-
-<button id="getLocationBtn">取得我的位置</button>
-<div id="output">尚未取得位置資訊</div>
+    <button id="getLocationBtn">取得我的位置</button>
+    
+    <div id="output">尚未取得位置資訊</div>
+</div>
 
 <script>
-// 元素
+// --- 元素 ---
 const btn = document.getElementById("getLocationBtn");
 const output = document.getElementById("output");
 
-// 點擊取得位置
+// --- 點擊 ---
 btn.addEventListener("click", () => {
   output.classList.add("loading");
   output.textContent = "定位中，請稍候...";
   getLocation();
 });
 
-// 主定位流程（GPS → IP fallback）
+// --- GPS → IP fallback ---
 function getLocation() {
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
@@ -97,7 +136,6 @@ function getLocation() {
       },
       (err) => {
         output.classList.remove("loading");
-        console.warn("GPS 失敗，改用 IP 定位", err);
         fetchByIP();
       },
       { enableHighAccuracy: true, timeout: 6000 }
@@ -107,7 +145,6 @@ function getLocation() {
   }
 }
 
-// IP fallback
 async function fetchByIP() {
   try {
     output.classList.add("loading");
@@ -118,7 +155,7 @@ async function fetchByIP() {
 
     output.classList.remove("loading");
     output.innerHTML =
-      `【IP 定位成功（較低精準）】\n\n` +
+      `【IP 定位成功（低精準）】\n\n` +
       `城市：${data.city}\n` +
       `國家：${data.country_name}\n` +
       `緯度：${data.latitude}\n` +
@@ -126,7 +163,7 @@ async function fetchByIP() {
       `（誤差可能偏大）`;
   } catch (error) {
     output.classList.remove("loading");
-    output.innerHTML = "定位失敗：無法取得 IP 資訊";
+    output.textContent = "定位失敗：無法取得 IP 資訊";
   }
 }
 </script>
