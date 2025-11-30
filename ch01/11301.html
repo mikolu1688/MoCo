@@ -1,76 +1,75 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>定位 + 感測器 Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>通用定位 + 感測器權限</title>
 </head>
 <body>
-  <h2>定位 & 感測器 Demo</h2>
-  <button id="getLocationBtn">取得我的位置</button>
+  <h2>共用版（iPhone + Android）</h2>
+  <button id="actionBtn">啟動定位與感測器</button>
 
   <script>
-    // ===== 🌍 檢查地理位置 =====
-    function checkGeolocationSupport() {
-      if ("geolocation" in navigator) {
-        console.log("地理位置服務可用");
-        return true;
-      } else {
-        console.log("地理位置服務不可用");
-        return false;
+    // ===== iPhone 必須：感測器授權 =====
+    async function requestIOSPermission() {
+      try {
+        // iOS DeviceMotion
+        if (typeof DeviceMotionEvent !== "undefined" && DeviceMotionEvent.requestPermission) {
+          const r1 = await DeviceMotionEvent.requestPermission();
+          console.log("DeviceMotionEvent:", r1);
+        }
+
+        // iOS DeviceOrientation
+        if (typeof DeviceOrientationEvent !== "undefined" && DeviceOrientationEvent.requestPermission) {
+          const r2 = await DeviceOrientationEvent.requestPermission();
+          console.log("DeviceOrientationEvent:", r2);
+        }
+      } catch (e) {
+        console.log("iOS 感測器授權錯誤:", e);
       }
     }
 
-    // ===== 📍 取得位置 =====
+    // ===== Android / 桌機：Permission API（可有可無）=====
+    async function requestSensorPermissions() {
+      if (!navigator.permissions) return;
+
+      try {
+        await navigator.permissions.query({ name: "accelerometer" });
+        await navigator.permissions.query({ name: "gyroscope" });
+        console.log("Android / Chrome 感測器權限查詢完成");
+      } catch (e) {
+        console.log("Android 感測器權限查詢錯誤:", e);
+      }
+    }
+
+    // ===== 地理位置 =====
     function getCurrentLocation() {
-      if (!checkGeolocationSupport()) return;
+      if (!("geolocation" in navigator)) {
+        console.log("此瀏覽器不支援定位");
+        return;
+      }
 
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log("位置取得成功:", position);
-          handlePosition(position);
+        (pos) => {
+          const c = pos.coords;
+          console.log("---- 位置資訊 ----");
+          console.log("緯度:", c.latitude);
+          console.log("經度:", c.longitude);
+          console.log("精度:", c.accuracy);
+          console.log("海拔:", c.altitude);
+          console.log("方向:", c.heading);
+          console.log("速度:", c.speed);
+          console.log("------------------");
         },
-        (error) => {
-          console.error("位置取得失敗:", error);
-        }
+        (err) => console.log("定位失敗:", err)
       );
     }
 
-    // ===== 🧭 印出位置資訊 =====
-    function handlePosition(position) {
-      const c = position.coords;
-
-      console.log("---- 位置資訊 ----");
-      console.log("緯度:", c.latitude);
-      console.log("經度:", c.longitude);
-      console.log("精度 (公尺):", c.accuracy);
-      console.log("海拔精度:", c.altitudeAccuracy);
-      console.log("方向 (0=北):", c.heading);
-      console.log("速度 (公尺/秒):", c.speed);
-      console.log("------------------");
-    }
-
-    // ===== 📱 感測器權限（部分瀏覽器需要）=====
-    async function requestSensorPermissions() {
-      try {
-        if (!navigator.permissions) {
-          console.log("此瀏覽器不支援 Permissions API");
-          return;
-        }
-
-        await navigator.permissions.query({ name: "accelerometer" });
-        await navigator.permissions.query({ name: "gyroscope" });
-
-        console.log("感測器權限查詢完成（不一定代表已授權）");
-      } catch (err) {
-        console.log("感測器權限請求出錯：", err);
-      }
-    }
-
-    // ===== 🚀 綁定按鈕 =====
-    document.getElementById("getLocationBtn").addEventListener("click", () => {
-      requestSensorPermissions();
-      getCurrentLocation();
+    // ===== 主按鈕 =====
+    document.getElementById("actionBtn").addEventListener("click", async () => {
+      await requestIOSPermission();      // iPhone 必須
+      await requestSensorPermissions();  // Android 有用
+      getCurrentLocation();              // GPS 定位
     });
   </script>
 </body>
