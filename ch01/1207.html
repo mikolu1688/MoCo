@@ -7,6 +7,12 @@
         .json-output {
             background: #f5f5f5;
             padding: 16px;
+            margin-top: 12px;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 1rem;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -14,22 +20,28 @@
 <body>
 <h1>Fetch Demo</h1>
 
+<button onclick="f_test()">取得 GitHub Commit 資料</button>
+
 <div class="json-output">
     <h3>JSON 資料格式</h3>
-    <pre id="jsonOutput"></pre>
+    <pre id="jsonOutput">尚未取得資料</pre>
 </div>
 
 <script>
 async function f_test() {
-    let url = 'https://api.github.com/repos/mikolu1688/MoCo/commits';
-    let response = await fetch(url);
-    let commits = await response.json();
-
     const jsonOutput = document.getElementById('jsonOutput');
-    jsonOutput.textContent = JSON.stringify(commits[0], null, 2);
-}
+    jsonOutput.textContent = '資料載入中...';
 
-f_test();
+    let url = 'https://api.github.com/repos/baricebard/MoCo/commits';
+    
+    try {
+        let response = await fetch(url);
+        let commits = await response.json();
+        jsonOutput.textContent = JSON.stringify(commits[0], null, 2);
+    } catch (error) {
+        jsonOutput.textContent = '資料取得失敗';
+    }
+}
 </script>
 
 </body>
