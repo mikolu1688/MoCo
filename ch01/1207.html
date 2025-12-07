@@ -32,7 +32,7 @@ async function f_test() {
     const jsonOutput = document.getElementById('jsonOutput');
     jsonOutput.textContent = '資料載入中...';
 
-    let url = 'https://api.github.com/repos/1688/MoCo/commits';
+    let url = 'https://api.github.com/repos/baricebard/MoCo/commits';
     
     try {
         let response = await fetch(url);
@@ -41,7 +41,7 @@ async function f_test() {
     } catch (error) {
         jsonOutput.textContent = '資料取得失敗';
     }
-
+}
 </script>
 
 </body>
