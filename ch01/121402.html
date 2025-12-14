@@ -42,7 +42,7 @@
 
         getBtn.onclick = async () => {
             const response = await fetch(
-                "https://httpbin.org/get?course=fetch&type=get"
+                "https://httpcan.org/get?course=fetch&type=get"
             );
             const result = await response.json();
             getResult.textContent = JSON.stringify(result, null, 2);
