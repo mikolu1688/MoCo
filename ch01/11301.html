@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>定位示範頁</title>
+
+<style>
+/* --- RESET，避免外部樣式影響 --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* --- 背景與排版 --- */
+body {
+    font-family: "Microsoft JhengHei", sans-serif;
+    background: linear-gradient(135deg, #a6f4ef, #dffffa, #c0f7f3);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+}
+
+/* --- 容器卡片 --- */
+.container {
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border-radius: 20px;
+    padding: 32px 28px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+    text-align: center;
+    animation: fadein 0.5s ease;
+}
+
+/* --- 標題 --- */
+h1 {
+    color: #00a8a3;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+/* --- 按鈕樣式 --- */
+button {
+    background-color: #00b3b0;
+    color: #fff;
+    border: none;
+    padding: 15px 32px;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.25s;
+    width: 100%;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.18);
+}
+
+button:hover {
+    background-color: #009f9d;
+    transform: translateY(-3px);
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+/* --- 顯示框 --- */
+#output {
+    margin-top: 24px;
+    padding: 18px;
+    background: #f3fdfd;
+    border-left: 5px solid #00b3b0;
+    border-radius: 10px;
+    text-align: left;
+    white-space: pre-line;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #333;
+    min-height: 60px;
+}
+
+/* --- Loading 動畫 --- */
+.loading {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* --- 卡片淡入動畫 --- */
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h1>📍 位置取得示範</h1>
+
+    <button id="getLocationBtn">取得我的位置</button>
+    
+    <div id="output">尚未取得位置資訊</div>
+</div>
+
+<script>
+// --- 元素 ---
+const btn = document.getElementById("getLocationBtn");
+const output = document.getElementById("output");
+
+// --- 點擊 ---
+btn.addEventListener("click", () => {
+  output.classList.add("loading");
+  output.textContent = "定位中，請稍候...";
+  getLocation();
+});
+
+// --- GPS → IP fallback ---
+function getLocation() {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        output.classList.remove("loading");
+        const { latitude, longitude, accuracy } = pos.coords;
+        output.innerHTML =
+          `【GPS 定位成功（高精準）】\n\n` +
+          `緯度：${latitude}\n` +
+          `經度：${longitude}\n` +
+          `精度：±${accuracy} 公尺`;
+      },
+      (err) => {
+        output.classList.remove("loading");
+        fetchByIP();
+      },
+      { enableHighAccuracy: true, timeout: 6000 }
+    );
+  } else {
+    fetchByIP();
+  }
+}
+
+async function fetchByIP() {
+  try {
+    output.classList.add("loading");
+    output.textContent = "GPS 失敗，正在以 IP 定位...";
+
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    output.classList.remove("loading");
+    output.innerHTML =
+      `【IP 定位成功（低精準）】\n\n` +
+      `城市：${data.city}\n` +
+      `國家：${data.country_name}\n` +
+      `緯度：${data.latitude}\n` +
+      `經度：${data.longitude}\n` +
+      `（誤差可能偏大）`;
+  } catch (error) {
+    output.classList.remove("loading");
+    output.textContent = "定位失敗：無法取得 IP 資訊";
+  }
+}
+</script>
+
+</body>
+</html>
